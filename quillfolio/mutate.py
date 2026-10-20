@@ -16,11 +16,12 @@ _HEADER = (
 )
 
 
-def starter_resume() -> dict:
+def starter_resume(name: str | None = None) -> dict:
     """Return a valid placeholder resume the operator replaces with their own history."""
+    chosen = name.strip() if isinstance(name, str) and name.strip() else "Your Name"
     return {
         "meta": {
-            "name": "Your Name",
+            "name": chosen,
             "headline": "The role you want next",
             "email": "you@example.com",
             "phone": "+1-555-0100",
@@ -71,9 +72,9 @@ def starter_resume() -> dict:
     }
 
 
-def write_starter(path: Path | str) -> None:
+def write_starter(path: Path | str, name: str | None = None) -> None:
     destination = Path(path)
-    save_resume(destination, starter_resume())
+    save_resume(destination, starter_resume(name))
     if destination.suffix.lower() in {".yaml", ".yml"}:
         body = destination.read_text(encoding="utf-8")
         destination.write_text(_HEADER + body, encoding="utf-8")

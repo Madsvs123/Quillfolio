@@ -35,6 +35,20 @@ A resume is a mapping with `meta`, `experience`, `projects`, `education`, and `s
 
 Dates are `YYYY`, `YYYY-MM`, `YYYY-MM-DD`, or `present` for an end date. Quote phone numbers and month-precision dates so they stay text. Commands that rewrite the file, such as `add-role`, save clean YAML or JSON and do not keep comments.
 
+## Config
+
+A file named `quillfolio.yaml` can set the default theme and the name written by `init`. Quillfolio looks in the working directory first, then in the folder that holds the resume. Keys other than `theme` and `name` are rejected. `theme` must be one of the built-in themes. When the file is absent, the theme is `atelier` and `init` writes `Your Name`.
+
+```yaml
+theme: ledger
+name: Your Name
+```
+
+```text
+py -3 -m quillfolio config
+py -3 -m quillfolio config --resume resume.yaml
+```
+
 ## Commands
 
 ### init

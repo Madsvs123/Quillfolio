@@ -8,6 +8,7 @@ from pathlib import Path
 
 from quillfolio import __version__
 from quillfolio.bundle import export_directory, export_zip
+from quillfolio.config import format_config, load_config
 from quillfolio.cover import render_cover_letter
 from quillfolio.diffing import diff_resumes, format_diff
 from quillfolio.errors import Issue, ResumeError
@@ -168,8 +169,7 @@ def build_parser() -> argparse.ArgumentParser:
     _add_resume_arg(render_html_cmd)
     render_html_cmd.add_argument(
         "--theme",
-        default="atelier",
-        help=f"built-in theme ({', '.join(theme_names())})",
+        help=f"built-in theme ({', '.join(theme_names())}); default is quillfolio.yaml or atelier",
     )
     render_html_cmd.add_argument("--out", type=Path, help="write HTML here; default is stdout")
     render_html_cmd.set_defaults(func=cmd_render_html)
@@ -213,9 +213,20 @@ def build_parser() -> argparse.ArgumentParser:
 
     preview = commands.add_parser("preview", help="serve the rendered resume on 127.0.0.1")
     _add_resume_arg(preview)
-    preview.add_argument("--theme", default="atelier", help=f"built-in theme ({', '.join(theme_names())})")
+    preview.add_argument(
+        "--theme",
+        help=f"built-in theme ({', '.join(theme_names())}); default is quillfolio.yaml or atelier",
+    )
     preview.add_argument("--port", type=int, default=8765)
     preview.set_defaults(func=cmd_preview)
+
+    config_cmd = commands.add_parser("config", help="show the default theme and name")
+    config_cmd.add_argument(
+        "--resume",
+        type=Path,
+        help="also look for quillfolio.yaml beside this resume",
+    )
+    config_cmd.set_defaults(func=cmd_config)
     return parser
 
 
@@ -253,7 +264,7 @@ def cmd_init(args: argparse.Namespace) -> int:
     if path.exists() and not args.force:
         print(f"error: refusing to overwrite {path}; pass --force to replace it", file=sys.stderr)
         return 1
-    write_starter(path)
+    write_starter(path, name=load_config(path).name)
     print(f"wrote {path}")
     return 0
 
@@ -435,7 +446,7 @@ def cmd_render_html(args: argparse.Namespace) -> int:
     resume = load_resume(args.path)
     if _reject_errors(resume, args.path):
         return 1
-    theme = normalize_theme(args.theme)
+    theme = _chosen_theme(args.theme, args.path)
     _write_output(render_html(resume, theme), args.out)
     return 0
 
@@ -506,7 +517,7 @@ def cmd_export(args: argparse.Namespace) -> int:
 
 
 def cmd_preview(args: argparse.Namespace) -> int:
-    theme = normalize_theme(args.theme)
+    theme = _chosen_theme(args.theme, args.path)
     server = make_preview_server(args.path, theme, args.port)
     host, port = server.server_address
     print(f"Serving http://{host}:{port}/", flush=True)
@@ -519,6 +530,17 @@ def cmd_preview(args: argparse.Namespace) -> int:
     finally:
         server.server_close()
     return 0
+
+
+def cmd_config(args: argparse.Namespace) -> int:
+    sys.stdout.write(format_config(load_config(args.resume)))
+    return 0
+
+
+def _chosen_theme(theme: str | None, resume_path: Path) -> str:
+    if theme:
+        return normalize_theme(theme)
+    return load_config(resume_path).theme
 
 
 def _add_resume_arg(parser: argparse.ArgumentParser) -> None:
