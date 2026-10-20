@@ -7,7 +7,7 @@ import html
 from quillfolio.errors import ResumeError
 from quillfolio.textutil import as_str, is_email, safe_href, string_list
 
-THEMES = ("atelier", "signal")
+THEMES = ("atelier", "signal", "ledger")
 
 _ATELIER_CSS = """
 *, *::before, *::after { box-sizing: border-box; }
@@ -237,6 +237,77 @@ p, li, h1, h3 { overflow-wrap: anywhere; }
 @page { margin: 0.55in; }
 """
 
+_LEDGER_CSS = """
+*, *::before, *::after { box-sizing: border-box; }
+html { font-size: 16px; }
+body.theme-ledger {
+  margin: 0;
+  background: #e4d7b8;
+  color: #1c1a16;
+  font-family: Consolas, "Courier New", Courier, monospace;
+  line-height: 1.45;
+}
+.sheet {
+  max-width: 760px;
+  margin: 1.5rem auto;
+  background: #f7f1e2;
+  padding: 1.6rem 1.7rem 1.4rem;
+  border: 3px double #3a3428;
+}
+.mast { text-align: center; margin-bottom: 0.4rem; }
+.folio {
+  margin: 0;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  font-size: 0.68rem;
+  color: #6b5b3e;
+}
+h1 {
+  margin: 0.35rem 0 0;
+  font-size: clamp(1.6rem, 4vw, 2.15rem);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.headline { margin: 0.45rem 0 0; color: #4a4338; }
+.rule {
+  margin: 0.85rem 0;
+  border: 0;
+  border-top: 1px solid #3a3428;
+}
+.tailored { margin: 0.4rem 0 0; color: #6b5b3e; }
+h2 {
+  margin: 0 0 0.55rem;
+  font-size: 0.78rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+h3 { margin: 0; font-size: 1rem; font-weight: 700; }
+.entry { margin: 0 0 0.9rem; }
+.meta, .detail, .group-name { color: #4a4338; }
+.meta, .detail { margin: 0.15rem 0 0; }
+ul { margin: 0.3rem 0 0; padding-left: 1.1rem; }
+li { margin: 0.12rem 0; }
+.contact { margin: 0; padding: 0; list-style: none; }
+.contact li { margin: 0.15rem 0; }
+.skill-line { margin: 0.2rem 0; }
+a { color: #1c1a16; }
+p, li, h1, h3 { overflow-wrap: anywhere; }
+.colophon {
+  margin: 0.4rem 0 0;
+  color: #6b5b3e;
+  font-size: 0.75rem;
+  text-align: center;
+}
+@media print {
+  body.theme-ledger { background: #fff; }
+  .sheet { margin: 0; max-width: none; border-color: #000; }
+  a { color: inherit; text-decoration: none; }
+  .entry { break-inside: avoid; }
+}
+@page { margin: 0.6in; }
+"""
+
 
 def theme_names() -> list[str]:
     return list(THEMES)
@@ -259,7 +330,9 @@ def render_html(resume: dict, theme: str = "atelier") -> str:
     chosen = normalize_theme(theme)
     if chosen == "atelier":
         return _render_atelier(resume)
-    return _render_signal(resume)
+    if chosen == "signal":
+        return _render_signal(resume)
+    return _render_ledger(resume)
 
 
 def _render_atelier(resume: dict) -> str:
@@ -314,6 +387,149 @@ def _render_signal(resume: dict) -> str:
         "</article>",
     ]
     return _shell("theme-signal", _SIGNAL_CSS, f"{name} - Resume", "\n".join(line for line in chunks if line))
+
+
+def _render_ledger(resume: dict) -> str:
+    meta = _meta(resume)
+    name = as_str(meta.get("name")) or "Resume"
+    chunks = [
+        '<article class="sheet">',
+        '  <header class="mast">',
+        '    <p class="folio">Resume</p>',
+        "    <h1>" + _esc(name) + "</h1>",
+        _optional_paragraph("headline", as_str(meta.get("headline"))),
+        _tailored(meta),
+        "  </header>",
+        '  <hr class="rule">',
+        _ledger_contact(meta),
+        _ledger_summary(meta),
+        _ledger_experience(resume.get("experience")),
+        _ledger_projects(resume.get("projects")),
+        _ledger_education(resume.get("education")),
+        _ledger_skills(resume.get("skills")),
+        '  <hr class="rule">',
+        '  <p class="colophon">Rendered locally with Quillfolio.</p>',
+        "</article>",
+    ]
+    return _shell("theme-ledger", _LEDGER_CSS, f"{name} - Resume", "\n".join(line for line in chunks if line))
+
+
+def _ledger_contact(meta: dict) -> str:
+    rows = _contact_rows(meta)
+    if not rows:
+        return ""
+    items = [f"      <li>{content}</li>" for _label, content in rows]
+    return "\n".join(
+        [
+            '  <section id="contact">',
+            *_ledger_heading("Contact"),
+            '    <ul class="contact">',
+            *items,
+            "    </ul>",
+            "  </section>",
+        ]
+    )
+
+
+def _ledger_summary(meta: dict) -> str:
+    summary = as_str(meta.get("summary"))
+    if not summary:
+        return ""
+    return "\n".join(
+        [
+            '  <section id="summary">',
+            *_ledger_heading("Summary"),
+            f"    <p>{_esc(summary)}</p>",
+            "  </section>",
+        ]
+    )
+
+
+def _ledger_heading(title: str) -> list[str]:
+    return ['    <hr class="rule">', f"    <h2>{_esc(title)}</h2>"]
+
+
+def _ledger_experience(entries: object) -> str:
+    roles = _mappings(entries)
+    if not roles:
+        return ""
+    blocks = ['  <section id="experience">', *_ledger_heading("Experience")]
+    for role in roles:
+        title = as_str(role.get("title")) or "Role"
+        company = as_str(role.get("company"))
+        heading = _esc(title)
+        if company:
+            heading += f" / {_esc(company)}"
+        blocks.append('    <article class="entry">')
+        blocks.append(f"      <h3>{heading}</h3>")
+        when = _when_where(role)
+        if when:
+            blocks.append(f'      <p class="meta">{when}</p>')
+        blocks.append(_bullets(string_list(role.get("highlights"))))
+        skills = string_list(role.get("skills"))
+        if skills:
+            blocks.append(f'      <p class="detail">{_esc(", ".join(skills))}</p>')
+        blocks.append("    </article>")
+    blocks.append("  </section>")
+    return "\n".join(line for line in blocks if line)
+
+
+def _ledger_projects(entries: object) -> str:
+    projects = _mappings(entries)
+    if not projects:
+        return ""
+    blocks = ['  <section id="projects">', *_ledger_heading("Projects")]
+    for project in projects:
+        name = as_str(project.get("name")) or "Project"
+        link = _linkify(project.get("url"), name)
+        blocks.append('    <article class="entry">')
+        blocks.append(f"      <h3>{link or _esc(name)}</h3>")
+        description = as_str(project.get("description"))
+        if description:
+            blocks.append(f'      <p class="detail">{_esc(description)}</p>')
+        blocks.append(_bullets(string_list(project.get("highlights"))))
+        blocks.append("    </article>")
+    blocks.append("  </section>")
+    return "\n".join(line for line in blocks if line)
+
+
+def _ledger_education(entries: object) -> str:
+    schools = _mappings(entries)
+    if not schools:
+        return ""
+    blocks = ['  <section id="education">', *_ledger_heading("Education")]
+    for school in schools:
+        degree = as_str(school.get("degree")) or "Study"
+        name = as_str(school.get("school"))
+        blocks.append('    <article class="entry">')
+        blocks.append(f"      <h3>{_esc(degree)}</h3>")
+        if name:
+            blocks.append(f'      <p class="meta">{_esc(name)}</p>')
+        span = _date_span(school.get("start"), school.get("end"))
+        if span:
+            blocks.append(f'      <p class="detail">{span}</p>')
+        details = as_str(school.get("details"))
+        if details:
+            blocks.append(f"      <p>{_esc(details)}</p>")
+        blocks.append("    </article>")
+    blocks.append("  </section>")
+    return "\n".join(blocks)
+
+
+def _ledger_skills(entries: object) -> str:
+    groups = _mappings(entries)
+    visible = [(group, string_list(group.get("items"))) for group in groups]
+    visible = [(group, items) for group, items in visible if items]
+    if not visible:
+        return ""
+    blocks = ['  <section id="skills">', *_ledger_heading("Skills")]
+    for group, items in visible:
+        label = as_str(group.get("group")) or "Skills"
+        blocks.append(
+            f'    <p class="skill-line"><span class="group-name">{_esc(label)}:</span> {_esc(", ".join(items))}</p>'
+        )
+    blocks.append("  </section>")
+    return "\n".join(blocks)
 
 
 def _shell(theme_class: str, css: str, title: str, body: str) -> str:

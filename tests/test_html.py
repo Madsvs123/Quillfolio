@@ -15,10 +15,13 @@ def test_themes_are_distinct_and_self_contained():
     resume = load_resume(EXAMPLE)
     atelier = render_html(resume, "atelier")
     signal = render_html(resume, "signal")
-    assert atelier != signal
+    ledger = render_html(resume, "ledger")
+    assert len({atelier, signal, ledger}) == 3
     assert 'class="theme-atelier"' in atelier
     assert 'class="theme-signal"' in signal
-    for document in (atelier, signal):
+    assert 'class="theme-ledger"' in ledger
+    assert "Courier" in ledger
+    for document in (atelier, signal, ledger):
         assert "Marlowe Voss" in document
         assert "Cedar Circuit" in document
         assert "Lantern Index" in document

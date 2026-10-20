@@ -121,7 +121,7 @@ def build_parser() -> argparse.ArgumentParser:
     diff.add_argument("right", type=Path)
     diff.set_defaults(func=cmd_diff)
 
-    export = commands.add_parser("export", help="write Markdown, JSON, YAML, and both HTML themes")
+    export = commands.add_parser("export", help="write Markdown, JSON, YAML, and each HTML theme")
     _add_resume_arg(export)
     export.add_argument("--out", type=Path, help="directory to create")
     export.add_argument("--zip", dest="zip_path", type=Path, help="zip archive to create")

@@ -107,11 +107,12 @@ py -3 -m quillfolio render-txt resume.yaml --width 60
 
 ### render-html
 
-Render one self-contained HTML file. The built-in themes are `atelier` (a serif sheet with a sidebar) and `signal` (a compact sans-serif page). Both use fonts already on the computer. They do not load remote fonts, scripts, or images.
+Render one self-contained HTML file. The built-in themes are `atelier` (a serif sheet with a sidebar), `signal` (a compact sans-serif page), and `ledger` (a monospace page ruled like a bound book). They use fonts already on the computer. They do not load remote fonts, scripts, or images.
 
 ```text
 py -3 -m quillfolio render-html examples/sample-resume.yaml --theme atelier --out resume.html
 py -3 -m quillfolio render-html examples/sample-resume.yaml --theme signal --out resume-signal.html
+py -3 -m quillfolio render-html examples/sample-resume.yaml --theme ledger --out resume-ledger.html
 ```
 
 ### diff
@@ -124,7 +125,7 @@ py -3 -m quillfolio diff resume.yaml tailored.yaml
 
 ### export
 
-Write `resume.md`, `resume.json`, `resume.yaml`, `resume.atelier.html`, and `resume.signal.html`. Use `--out` for a directory, `--zip` for an archive, or both.
+Write `resume.md`, `resume.json`, `resume.yaml`, and one HTML file for each built-in theme (`resume.atelier.html`, `resume.signal.html`, and `resume.ledger.html`). Use `--out` for a directory, `--zip` for an archive, or both.
 
 ```text
 py -3 -m quillfolio export examples/sample-resume.yaml --out dist
@@ -147,6 +148,7 @@ Open `http://127.0.0.1:8765/` in a browser on the same machine.
 | --- | --- |
 | `atelier` | Warm paper page, serif type, experience in the main column, contact and skills in a sidebar |
 | `signal` | Cool compact page, sans-serif type, dated rows, skill chips, and a dark-mode stylesheet for the operating system setting |
+| `ledger` | Warm ruled page, monospace type, centered name, and a single column separated by horizontal rules |
 
 ## Tests
 

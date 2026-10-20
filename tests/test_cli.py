@@ -91,11 +91,13 @@ def test_init_validate_add_and_export(tmp_path):
         "resume.yaml",
         "resume.atelier.html",
         "resume.signal.html",
+        "resume.ledger.html",
     ):
         assert (out / name).is_file()
     assert "Your Name" in (out / "resume.md").read_text(encoding="utf-8")
     assert "theme-atelier" in (out / "resume.atelier.html").read_text(encoding="utf-8")
     assert "theme-signal" in (out / "resume.signal.html").read_text(encoding="utf-8")
+    assert "theme-ledger" in (out / "resume.ledger.html").read_text(encoding="utf-8")
     with zipfile.ZipFile(archive) as bundle:
         names = set(bundle.namelist())
     assert "resume.md" in names
