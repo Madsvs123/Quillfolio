@@ -71,6 +71,22 @@ Append one project. `--name` and at least one `--highlight` are required.
 py -3 -m quillfolio add-project resume.yaml --name "Example Project" --url https://example.com/project --description "A short description." --highlight "Say what you built." --skill python
 ```
 
+### skills
+
+Print skills grouped by category, in the order they appear in the file.
+
+```text
+py -3 -m quillfolio skills resume.yaml
+```
+
+### add-skill
+
+Add one skill to a category. The category name is matched without regard to case, and the existing spelling is kept. A new category is created when the name is new. The same skill cannot be added twice to one category.
+
+```text
+py -3 -m quillfolio add-skill resume.yaml --group Languages --item Rust
+```
+
 ### reorder
 
 Change the order of top-level sections, or the order of entries inside `experience`, `projects`, or `education`. Named items move to the front in the order you give. Anything you do not name keeps its previous order after those. The command rewrites the file.

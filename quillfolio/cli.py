@@ -18,6 +18,7 @@ from quillfolio.plain_render import render_plain
 from quillfolio.preview import make_preview_server
 from quillfolio.reorder import reorder_entries, reorder_sections
 from quillfolio.resume_io import dump_text, load_resume, save_resume
+from quillfolio.skills import add_skill, format_skills
 from quillfolio.tailor import tailor_resume
 from quillfolio.validate import validate_resume
 
@@ -99,6 +100,16 @@ def build_parser() -> argparse.ArgumentParser:
         help="entry id to place next; repeat in the order you want",
     )
     reorder.set_defaults(func=cmd_reorder)
+
+    skills_cmd = commands.add_parser("skills", help="list skills grouped by category")
+    _add_resume_arg(skills_cmd)
+    skills_cmd.set_defaults(func=cmd_skills)
+
+    add_skill_cmd = commands.add_parser("add-skill", help="add a skill to a category")
+    _add_resume_arg(add_skill_cmd)
+    add_skill_cmd.add_argument("--group", required=True, help="category name, for example Languages")
+    add_skill_cmd.add_argument("--item", required=True, help="skill to add to that category")
+    add_skill_cmd.set_defaults(func=cmd_add_skill)
 
     tailor = commands.add_parser("tailor", help="keep sections that match a target role")
     _add_resume_arg(tailor)
@@ -232,6 +243,20 @@ def cmd_add_project(args: argparse.Namespace) -> int:
     )
     save_resume(args.path, updated)
     print(f"added project {args.name} to {args.path}")
+    return 0
+
+
+def cmd_skills(args: argparse.Namespace) -> int:
+    resume = load_resume(args.path)
+    sys.stdout.write(format_skills(resume))
+    return 0
+
+
+def cmd_add_skill(args: argparse.Namespace) -> int:
+    resume = load_resume(args.path)
+    updated = add_skill(resume, args.group, args.item)
+    save_resume(args.path, updated)
+    print(f"added {args.item} to {args.group} in {args.path}")
     return 0
 
 
