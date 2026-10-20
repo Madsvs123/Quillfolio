@@ -166,6 +166,14 @@ Compare two resume files and print added, removed, and changed fields. Exit code
 py -3 -m quillfolio diff resume.yaml tailored.yaml
 ```
 
+### stats
+
+Count words, roles, projects, schools, skills, and bullets. `years` is the sum of each experience entry from its start to its end, in years with one decimal place. A missing end, or `present`, runs through today. Overlapping roles are both counted.
+
+```text
+py -3 -m quillfolio stats resume.yaml
+```
+
 ### snapshot, snapshots, and restore
 
 `snapshot` copies the resume bytes into `.quillfolio-snapshots/` next to the file. The label uses letters, numbers, hyphens, or underscores. `snapshots` lists what has been saved. `restore` writes a saved copy back over the resume. Pass `--force` to replace a label that already exists. These commands do not upload the file.

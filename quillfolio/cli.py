@@ -22,6 +22,7 @@ from quillfolio.resume_io import dump_text, load_resume, save_resume
 from quillfolio.schema_check import schema_errors, schema_text
 from quillfolio.skills import add_skill, format_skills
 from quillfolio.snapshots import format_snapshots, list_snapshots, restore_snapshot, take_snapshot
+from quillfolio.stats import format_stats, resume_stats
 from quillfolio.tailor import tailor_resume
 from quillfolio.validate import validate_resume
 
@@ -171,6 +172,10 @@ def build_parser() -> argparse.ArgumentParser:
     diff.add_argument("left", type=Path)
     diff.add_argument("right", type=Path)
     diff.set_defaults(func=cmd_diff)
+
+    stats_cmd = commands.add_parser("stats", help="count words, roles, and years")
+    _add_resume_arg(stats_cmd)
+    stats_cmd.set_defaults(func=cmd_stats)
 
     snapshot = commands.add_parser("snapshot", help="save a copy of the resume beside the file")
     _add_resume_arg(snapshot)
@@ -415,6 +420,14 @@ def cmd_render_html(args: argparse.Namespace) -> int:
         return 1
     theme = normalize_theme(args.theme)
     _write_output(render_html(resume, theme), args.out)
+    return 0
+
+
+def cmd_stats(args: argparse.Namespace) -> int:
+    resume = load_resume(args.path)
+    if _reject_errors(resume, args.path):
+        return 1
+    sys.stdout.write(format_stats(resume_stats(resume)))
     return 0
 
 
