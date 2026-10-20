@@ -166,6 +166,14 @@ Compare two resume files and print added, removed, and changed fields. Exit code
 py -3 -m quillfolio diff resume.yaml tailored.yaml
 ```
 
+### merge
+
+Combine two resume files you already have. The first file keeps its meta values and any entry whose id is already present. New roles, projects, and education entries from the second file are appended. Skill categories with the same name are united, and repeated skills are stored once. Notes about skipped ids are printed to standard error. The command does not contact a service.
+
+```text
+py -3 -m quillfolio merge resume.yaml other.yaml --out merged.yaml
+```
+
 ### stats
 
 Count words, roles, projects, schools, skills, and bullets. `years` is the sum of each experience entry from its start to its end, in years with one decimal place. A missing end, or `present`, runs through today. Overlapping roles are both counted.

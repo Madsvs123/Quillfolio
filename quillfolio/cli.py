@@ -13,6 +13,7 @@ from quillfolio.diffing import diff_resumes, format_diff
 from quillfolio.errors import Issue, ResumeError
 from quillfolio.html_render import normalize_theme, render_html, theme_names
 from quillfolio.keywords import format_coverage, keyword_coverage, load_job_text
+from quillfolio.merge import merge_resumes
 from quillfolio.markdown_render import render_markdown
 from quillfolio.mutate import add_project, add_role, write_starter
 from quillfolio.plain_render import render_plain
@@ -172,6 +173,12 @@ def build_parser() -> argparse.ArgumentParser:
     diff.add_argument("left", type=Path)
     diff.add_argument("right", type=Path)
     diff.set_defaults(func=cmd_diff)
+
+    merge_cmd = commands.add_parser("merge", help="merge two local resume files")
+    merge_cmd.add_argument("left", type=Path, help="resume whose meta and ids win")
+    merge_cmd.add_argument("right", type=Path, help="resume to add entries from")
+    merge_cmd.add_argument("--out", type=Path, help="write the merged resume here; default is stdout")
+    merge_cmd.set_defaults(func=cmd_merge)
 
     stats_cmd = commands.add_parser("stats", help="count words, roles, and years")
     _add_resume_arg(stats_cmd)
@@ -420,6 +427,18 @@ def cmd_render_html(args: argparse.Namespace) -> int:
         return 1
     theme = normalize_theme(args.theme)
     _write_output(render_html(resume, theme), args.out)
+    return 0
+
+
+def cmd_merge(args: argparse.Namespace) -> int:
+    merged, notes = merge_resumes(load_resume(args.left), load_resume(args.right))
+    for note in notes:
+        print(f"note: {note}", file=sys.stderr)
+    if args.out is None:
+        sys.stdout.write(dump_text(merged, args.left))
+    else:
+        save_resume(args.out, merged)
+        print(f"wrote {args.out}")
     return 0
 
 
