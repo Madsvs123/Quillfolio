@@ -273,7 +273,7 @@ py -3 -m quillfolio doctor resume.yaml
 py -3 -m pytest
 ```
 
-The suite covers validation, tailoring, Markdown rendering, and diffs, and it also exercises HTML themes, export, and the loopback preview.
+The suite covers validation, tailoring, Markdown rendering, and diffs, and it also exercises HTML themes, export, and the loopback preview. `tests/test_new_commands.py` runs the later commands: cover letters, reordering, keyword coverage, snapshots, schema checks, plain text, merge, lint, stats, config, doctor, sorting, bullets, and skill categories.
 
 ## License
 
