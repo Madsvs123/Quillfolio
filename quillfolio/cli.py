@@ -16,6 +16,7 @@ from quillfolio.markdown_render import render_markdown
 from quillfolio.mutate import add_project, add_role, write_starter
 from quillfolio.plain_render import render_plain
 from quillfolio.preview import make_preview_server
+from quillfolio.reorder import reorder_entries, reorder_sections
 from quillfolio.resume_io import dump_text, load_resume, save_resume
 from quillfolio.tailor import tailor_resume
 from quillfolio.validate import validate_resume
@@ -78,6 +79,26 @@ def build_parser() -> argparse.ArgumentParser:
     project.add_argument("--highlight", action="append", dest="highlights")
     project.add_argument("--skill", action="append", dest="skills")
     project.set_defaults(func=cmd_add_project)
+
+    reorder = commands.add_parser("reorder", help="reorder sections or entries")
+    _add_resume_arg(reorder)
+    reorder.add_argument(
+        "--section",
+        action="append",
+        dest="sections",
+        help="section to place next; repeat in the order you want",
+    )
+    reorder.add_argument(
+        "--entries",
+        help="reorder entries inside experience, projects, or education",
+    )
+    reorder.add_argument(
+        "--id",
+        action="append",
+        dest="ids",
+        help="entry id to place next; repeat in the order you want",
+    )
+    reorder.set_defaults(func=cmd_reorder)
 
     tailor = commands.add_parser("tailor", help="keep sections that match a target role")
     _add_resume_arg(tailor)
@@ -211,6 +232,27 @@ def cmd_add_project(args: argparse.Namespace) -> int:
     )
     save_resume(args.path, updated)
     print(f"added project {args.name} to {args.path}")
+    return 0
+
+
+def cmd_reorder(args: argparse.Namespace) -> int:
+    if args.sections and (args.entries or args.ids):
+        print("error: pass sections or entries, not both", file=sys.stderr)
+        return 1
+    if args.entries and not args.ids:
+        print("error: pass at least one --id when reordering entries", file=sys.stderr)
+        return 1
+    if not args.sections and not args.entries:
+        print("error: pass --section or --entries", file=sys.stderr)
+        return 1
+    resume = load_resume(args.path)
+    if args.entries:
+        updated = reorder_entries(resume, args.entries, args.ids)
+        print(f"reordered {args.entries} in {args.path}")
+    else:
+        updated = reorder_sections(resume, args.sections)
+        print(f"reordered sections in {args.path}")
+    save_resume(args.path, updated)
     return 0
 
 
