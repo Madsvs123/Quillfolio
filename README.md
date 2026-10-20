@@ -80,6 +80,14 @@ py -3 -m quillfolio tailor examples/sample-resume.yaml --role "Python observabil
 py -3 -m quillfolio tailor resume.yaml --role "platform services" --keyword python --max-roles 2 --out tailored.yaml
 ```
 
+### cover-letter
+
+Draft a plain-text letter from the same resume file. The command uses your name, contact lines, summary, and up to three experience highlights. It does not look up the company and it does not send the file. The resume itself is left unchanged.
+
+```text
+py -3 -m quillfolio cover-letter resume.yaml --role "Systems engineer" --company "Northwind Archive" --out letter.txt
+```
+
 ### render-md
 
 Render Markdown to stdout, or to a file with `--out`.

@@ -8,6 +8,7 @@ from pathlib import Path
 
 from quillfolio import __version__
 from quillfolio.bundle import export_directory, export_zip
+from quillfolio.cover import render_cover_letter
 from quillfolio.diffing import diff_resumes, format_diff
 from quillfolio.errors import Issue, ResumeError
 from quillfolio.html_render import normalize_theme, render_html, theme_names
@@ -86,6 +87,13 @@ def build_parser() -> argparse.ArgumentParser:
     tailor.add_argument("--max-roles", type=int)
     tailor.add_argument("--max-projects", type=int)
     tailor.set_defaults(func=cmd_tailor)
+
+    cover = commands.add_parser("cover-letter", help="draft a letter from this resume file")
+    _add_resume_arg(cover)
+    cover.add_argument("--role", required=True, help="role you are writing about")
+    cover.add_argument("--company", required=True, help="name to address on the letter")
+    cover.add_argument("--out", type=Path, help="write the letter here; default is stdout")
+    cover.set_defaults(func=cmd_cover_letter)
 
     render_md = commands.add_parser("render-md", help="render Markdown")
     _add_resume_arg(render_md)
@@ -236,6 +244,15 @@ def cmd_tailor(args: argparse.Namespace) -> int:
         print(f"wrote {args.out}")
     else:
         sys.stdout.write(dump_text(result.resume, args.path))
+    return 0
+
+
+def cmd_cover_letter(args: argparse.Namespace) -> int:
+    resume = load_resume(args.path)
+    if _reject_errors(resume, args.path):
+        return 1
+    letter = render_cover_letter(resume, role=args.role, company=args.company)
+    _write_output(letter, args.out)
     return 0
 
 
