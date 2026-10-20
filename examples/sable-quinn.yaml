@@ -1,0 +1,79 @@
+# Fictional sample for Quillfolio.
+# Sable Quinn is an invented person. The email domain is example.com.
+# Nothing in this file describes a real employer, school, or publication.
+
+meta:
+  name: Sable Quinn
+  headline: Documentation engineer who writes for people in a hurry
+  email: sable.quinn@example.com
+  phone: "+1-555-0194"
+  location: Fictional Mesa, AZ
+  website: "https://example.com/sable"
+  summary: >-
+    Sable Quinn is a fictional writer created as a second Quillfolio example.
+    The roles, projects, and school below were invented for this file
+    and describe no real career.
+
+experience:
+  - id: kindling-press
+    company: Kindling Press
+    title: Staff Writer
+    location: Remote
+    start: "2022-12"
+    end: present
+    skills:
+      - editing
+      - docs-as-code
+    highlights:
+      - Wrote an invented release-note series for a product that was never built.
+      - Kept a fictional style sheet so two imaginary teams would use the same verbs.
+
+  - id: glass-orchard
+    company: Glass Orchard
+    title: Documentation Engineer
+    location: Fictional Mesa, AZ
+    start: "2019-02"
+    end: "2022-11"
+    skills:
+      - markdown
+      - tutorials
+    highlights:
+      - Drafted a make-believe tutorial path for a tool that exists only in this example.
+      - Recorded invented review comments so the sample would show a second bullet.
+
+projects:
+  - id: margin-notes
+    name: Margin Notes
+    url: "https://example.com/margin-notes"
+    description: A fictional field guide to comments left in imaginary books.
+    skills:
+      - writing
+    highlights:
+      - Collected invented annotations so the project section would have a page to render.
+
+  - id: quiet-index
+    name: Quiet Index
+    url: "https://example.com/quiet-index"
+    description: An imaginary glossary of harbor and desert terms, used only as sample content.
+    skills:
+      - indexing
+    highlights:
+      - Sorted made-up entries into a local file that never left this example.
+
+education:
+  - school: Example College
+    degree: B.A. Imaginary Letters
+    start: "2015"
+    end: "2019"
+    details: Coursework in this sample is fictional, including a seminar on invented manuals.
+
+skills:
+  - group: Writing
+    items:
+      - Editing
+      - Tutorials
+      - Release notes
+  - group: Tools
+    items:
+      - Markdown
+      - Git

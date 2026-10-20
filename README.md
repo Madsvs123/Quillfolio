@@ -4,7 +4,7 @@ Quillfolio is a local command-line tool that turns a resume file you write into 
 
 It does not collect other people's resumes, run accounts, or send your file anywhere. The preview command serves the rendered page only on `127.0.0.1`.
 
-The sample in `examples/sample-resume.yaml` is fiction. Marlowe Voss is an invented name, and the only email address in that file is on `example.com`.
+The samples in `examples/` are fiction. Marlowe Voss and Sable Quinn are invented names, and the only email addresses in those files are on `example.com`.
 
 ## Install
 
@@ -31,7 +31,7 @@ py -3 -m pytest
 
 ## Resume file
 
-A resume is a mapping with `meta`, `experience`, `projects`, `education`, and `skills`. `init` writes a starter you replace with your own history. `examples/sample-resume.yaml` is a filled-in fictional example. The same keys work in JSON when the file ends in `.json`.
+A resume is a mapping with `meta`, `experience`, `projects`, `education`, and `skills`. `init` writes a starter you replace with your own history. `examples/sample-resume.yaml` is a fictional engineering resume, and `examples/sable-quinn.yaml` is a fictional writing resume. The same keys work in JSON when the file ends in `.json`.
 
 Dates are `YYYY`, `YYYY-MM`, `YYYY-MM-DD`, or `present` for an end date. Quote phone numbers and month-precision dates so they stay text. Commands that rewrite the file, such as `add-role`, save clean YAML or JSON and do not keep comments.
 
