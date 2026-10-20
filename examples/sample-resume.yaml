@@ -1,0 +1,85 @@
+# Fictional sample for Quillfolio.
+# Marlowe Voss is an invented person. The email domain is example.com.
+# Nothing in this file describes a real employer or a real product.
+
+meta:
+  name: Marlowe Voss
+  headline: Systems engineer focused on calm, observable software
+  email: marlowe.voss@example.com
+  phone: "+1-555-0148"
+  location: Fictional Harbor, OR
+  website: "https://example.com/marlowe"
+  summary: >-
+    Marlowe Voss is a fictional engineer created to show Quillfolio.
+    The roles, projects, and school below were invented for this example
+    and describe no real career.
+
+experience:
+  - id: cedar-circuit
+    company: Cedar Circuit
+    title: Senior Systems Engineer
+    location: Remote
+    start: "2021-04"
+    end: present
+    skills:
+      - python
+      - linux
+      - observability
+    highlights:
+      - Designed an invented job queue that replayed imaginary events for a product that does not exist.
+      - Wrote the on-call notes for a fictional rotation so the sample resume would have a second bullet.
+
+  - id: paperfinch
+    company: Paperfinch Studio
+    title: Software Engineer
+    location: Fictional Harbor, OR
+    start: "2018-06"
+    end: "2021-03"
+    skills:
+      - javascript
+      - css
+      - accessibility
+    highlights:
+      - Built a make-believe component library for an invented publishing tool.
+      - Documented keyboard behavior for screens that were never shipped.
+
+projects:
+  - id: lantern-index
+    name: Lantern Index
+    url: "https://example.com/lantern-index"
+    description: A fictional catalog of lighthouse patents, used only as sample resume content.
+    skills:
+      - python
+      - sqlite
+    highlights:
+      - Indexed invented documents so the project section would have something to render.
+      - Kept the whole collection on a laptop that exists only in this example.
+
+  - id: tide-ledger
+    name: Tide Ledger
+    url: "https://example.com/tide-ledger"
+    description: An imaginary notebook for tracking harbor weather.
+    skills:
+      - go
+      - cli
+    highlights:
+      - Parsed made-up tide tables into a local file format.
+
+education:
+  - school: Example University
+    degree: B.S. Imaginary Engineering
+    start: "2014"
+    end: "2018"
+    details: Coursework in this sample is fictional, including a seminar on invented bridges.
+
+skills:
+  - group: Languages
+    items:
+      - Python
+      - Go
+      - SQL
+  - group: Practices
+    items:
+      - Testing
+      - Technical writing
+      - Incident notes
