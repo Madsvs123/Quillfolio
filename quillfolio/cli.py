@@ -19,6 +19,7 @@ from quillfolio.plain_render import render_plain
 from quillfolio.preview import make_preview_server
 from quillfolio.reorder import reorder_entries, reorder_sections
 from quillfolio.resume_io import dump_text, load_resume, save_resume
+from quillfolio.schema_check import schema_errors, schema_text
 from quillfolio.skills import add_skill, format_skills
 from quillfolio.snapshots import format_snapshots, list_snapshots, restore_snapshot, take_snapshot
 from quillfolio.tailor import tailor_resume
@@ -60,6 +61,11 @@ def build_parser() -> argparse.ArgumentParser:
     _add_resume_arg(validate)
     validate.add_argument("--strict", action="store_true", help="treat warnings as errors")
     validate.set_defaults(func=cmd_validate)
+
+    schema_cmd = commands.add_parser("schema", help="check a resume against the bundled JSON Schema")
+    schema_cmd.add_argument("path", nargs="?", type=Path, help="resume file (.yaml, .yml, or .json)")
+    schema_cmd.add_argument("--show", action="store_true", help="print the JSON Schema")
+    schema_cmd.set_defaults(func=cmd_schema)
 
     role = commands.add_parser("add-role", help="append an experience entry")
     _add_resume_arg(role)
@@ -239,6 +245,27 @@ def cmd_validate(args: argparse.Namespace) -> int:
     resume = load_resume(args.path)
     issues = validate_resume(resume)
     return _print_issues(issues, str(args.path), strict=args.strict)
+
+
+def cmd_schema(args: argparse.Namespace) -> int:
+    if args.show and args.path is not None:
+        print("error: pass a resume file or --show, not both", file=sys.stderr)
+        return 1
+    if args.show:
+        sys.stdout.write(schema_text())
+        return 0
+    if args.path is None:
+        print("error: pass a resume file or --show", file=sys.stderr)
+        return 1
+    resume = load_resume(args.path)
+    errors = schema_errors(resume)
+    if not errors:
+        print(f"ok: {args.path}")
+        return 0
+    for error in errors:
+        print(f"error: {args.path}: {error}", file=sys.stderr)
+    print(f"{args.path}: {len(errors)} schema error(s)", file=sys.stderr)
+    return 1
 
 
 def cmd_add_role(args: argparse.Namespace) -> int:

@@ -55,6 +55,15 @@ py -3 -m quillfolio validate resume.yaml
 py -3 -m quillfolio validate examples/sample-resume.yaml --strict
 ```
 
+### schema
+
+Check the resume against the JSON Schema shipped in `quillfolio/resume.schema.json`. Dates must be quoted text (`YYYY`, `YYYY-MM`, or `YYYY-MM-DD`). `--show` prints the schema. This check is structural. `validate` still reports the editorial warnings.
+
+```text
+py -3 -m quillfolio schema resume.yaml
+py -3 -m quillfolio schema --show
+```
+
 ### add-role
 
 Append one experience entry. Repeat `--highlight` and `--skill` for each bullet and skill. `--start` is required. `--end` may be a date or `present`.

@@ -22,7 +22,7 @@ quillfolio = "quillfolio.cli:console_main"
 packages = ["quillfolio"]
 
 [tool.setuptools.package-data]
-quillfolio = ["print.css"]
+quillfolio = ["print.css", "resume.schema.json"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
