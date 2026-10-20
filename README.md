@@ -55,6 +55,14 @@ py -3 -m quillfolio validate resume.yaml
 py -3 -m quillfolio validate examples/sample-resume.yaml --strict
 ```
 
+### lint
+
+Flag missing dates and empty bullets. Experience and education need a start and an end (`present` is an end). Experience and projects need at least one highlight that is not blank. `validate` still allows a missing end as a warning. `lint` treats that gap as an error and exits `1`.
+
+```text
+py -3 -m quillfolio lint resume.yaml
+```
+
 ### schema
 
 Check the resume against the JSON Schema shipped in `quillfolio/resume.schema.json`. Dates must be quoted text (`YYYY`, `YYYY-MM`, or `YYYY-MM-DD`). `--show` prints the schema. This check is structural. `validate` still reports the editorial warnings.

@@ -13,6 +13,7 @@ from quillfolio.diffing import diff_resumes, format_diff
 from quillfolio.errors import Issue, ResumeError
 from quillfolio.html_render import normalize_theme, render_html, theme_names
 from quillfolio.keywords import format_coverage, keyword_coverage, load_job_text
+from quillfolio.linting import lint_resume
 from quillfolio.merge import merge_resumes
 from quillfolio.markdown_render import render_markdown
 from quillfolio.mutate import add_project, add_role, write_starter
@@ -63,6 +64,10 @@ def build_parser() -> argparse.ArgumentParser:
     _add_resume_arg(validate)
     validate.add_argument("--strict", action="store_true", help="treat warnings as errors")
     validate.set_defaults(func=cmd_validate)
+
+    lint_cmd = commands.add_parser("lint", help="flag missing dates and empty bullets")
+    _add_resume_arg(lint_cmd)
+    lint_cmd.set_defaults(func=cmd_lint)
 
     schema_cmd = commands.add_parser("schema", help="check a resume against the bundled JSON Schema")
     schema_cmd.add_argument("path", nargs="?", type=Path, help="resume file (.yaml, .yml, or .json)")
@@ -257,6 +262,11 @@ def cmd_validate(args: argparse.Namespace) -> int:
     resume = load_resume(args.path)
     issues = validate_resume(resume)
     return _print_issues(issues, str(args.path), strict=args.strict)
+
+
+def cmd_lint(args: argparse.Namespace) -> int:
+    resume = load_resume(args.path)
+    return _print_issues(lint_resume(resume), str(args.path), strict=False)
 
 
 def cmd_schema(args: argparse.Namespace) -> int:
