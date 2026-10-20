@@ -21,6 +21,9 @@ quillfolio = "quillfolio.cli:console_main"
 [tool.setuptools]
 packages = ["quillfolio"]
 
+[tool.setuptools.package-data]
+quillfolio = ["print.css"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = [".", "tests"]

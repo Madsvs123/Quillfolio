@@ -1,0 +1,41 @@
+/* quillfolio-print
+   Shared paper rules for every built-in theme.
+   The rendered page stays self-contained: this sheet is embedded, not linked. */
+@media print {
+  html { font-size: 11pt; }
+  body {
+    background: #fff !important;
+    color: #000 !important;
+  }
+  .sheet {
+    box-shadow: none !important;
+    margin: 0 !important;
+    max-width: none !important;
+    background: #fff !important;
+  }
+  a, a:visited {
+    color: #000 !important;
+    text-decoration: none;
+  }
+  a[href^="http"]::after,
+  a[href^="https"]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.85em;
+    word-break: break-all;
+  }
+  .role, .project, .edu, .entry, .row {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  h1, h2, h3 {
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+  .colophon, .tailored, .headline, .when, .meta {
+    color: #000 !important;
+  }
+}
+@page {
+  size: letter;
+  margin: 0.6in;
+}

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import html
+from pathlib import Path
 
 from quillfolio.errors import ResumeError
 from quillfolio.textutil import as_str, is_email, safe_href, string_list
@@ -532,6 +533,14 @@ def _ledger_skills(entries: object) -> str:
     return "\n".join(blocks)
 
 
+def load_print_css() -> str:
+    """Return the shared print stylesheet shipped with the package."""
+    path = Path(__file__).with_name("print.css")
+    if not path.is_file():
+        raise ResumeError("print stylesheet is missing from the install")
+    return path.read_text(encoding="utf-8").strip()
+
+
 def _shell(theme_class: str, css: str, title: str, body: str) -> str:
     return "\n".join(
         [
@@ -544,6 +553,7 @@ def _shell(theme_class: str, css: str, title: str, body: str) -> str:
             "  <title>" + _esc(title) + "</title>",
             "  <style>",
             css.strip(),
+            load_print_css(),
             "  </style>",
             "</head>",
             f'<body class="{theme_class}">',

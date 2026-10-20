@@ -46,6 +46,17 @@ def test_html_escapes_operator_text():
     assert "javascript:" not in document
 
 
+def test_print_stylesheet_is_embedded_in_every_theme():
+    resume = load_resume(EXAMPLE)
+    for theme in ("atelier", "signal", "ledger"):
+        document = render_html(resume, theme)
+        assert "quillfolio-print" in document
+        assert "size: letter" in document
+        assert "break-inside: avoid" in document
+        assert document.count("<style>") == 1
+        assert "<link" not in document
+
+
 def test_unknown_theme_is_rejected():
     resume = load_resume(EXAMPLE)
     with pytest.raises(ResumeError, match="unknown theme"):

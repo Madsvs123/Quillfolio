@@ -107,7 +107,7 @@ py -3 -m quillfolio render-txt resume.yaml --width 60
 
 ### render-html
 
-Render one self-contained HTML file. The built-in themes are `atelier` (a serif sheet with a sidebar), `signal` (a compact sans-serif page), and `ledger` (a monospace page ruled like a bound book). They use fonts already on the computer. They do not load remote fonts, scripts, or images.
+Render one self-contained HTML file. The built-in themes are `atelier` (a serif sheet with a sidebar), `signal` (a compact sans-serif page), and `ledger` (a monospace page ruled like a bound book). They use fonts already on the computer. They do not load remote fonts, scripts, or images. Each page embeds `quillfolio/print.css`, which sets letter-size paper, drops screen color and shadow, keeps roles from splitting across pages, and prints the address after a web link.
 
 ```text
 py -3 -m quillfolio render-html examples/sample-resume.yaml --theme atelier --out resume.html
