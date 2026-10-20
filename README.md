@@ -233,6 +233,15 @@ py -3 -m quillfolio preview examples/sample-resume.yaml --theme atelier --port 8
 
 Open `http://127.0.0.1:8765/` in a browser on the same machine.
 
+### doctor
+
+Check the interpreter, PyYAML, the Quillfolio version, the print stylesheet, the JSON Schema, and that each built-in theme can render the starter resume. Pass a resume file to also run `validate`, `schema`, and `lint` on it. The command reads only this machine.
+
+```text
+py -3 -m quillfolio doctor
+py -3 -m quillfolio doctor resume.yaml
+```
+
 ## Themes
 
 | Theme | Layout |

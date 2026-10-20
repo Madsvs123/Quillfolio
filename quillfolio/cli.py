@@ -11,6 +11,7 @@ from quillfolio.bundle import export_directory, export_zip
 from quillfolio.config import format_config, load_config
 from quillfolio.cover import render_cover_letter
 from quillfolio.diffing import diff_resumes, format_diff
+from quillfolio.doctor import doctor, format_doctor
 from quillfolio.errors import Issue, ResumeError
 from quillfolio.html_render import normalize_theme, render_html, theme_names
 from quillfolio.keywords import format_coverage, keyword_coverage, load_job_text
@@ -227,6 +228,10 @@ def build_parser() -> argparse.ArgumentParser:
         help="also look for quillfolio.yaml beside this resume",
     )
     config_cmd.set_defaults(func=cmd_config)
+
+    doctor_cmd = commands.add_parser("doctor", help="check the install and an optional resume file")
+    doctor_cmd.add_argument("path", nargs="?", type=Path, help="resume file to check")
+    doctor_cmd.set_defaults(func=cmd_doctor)
     return parser
 
 
@@ -530,6 +535,12 @@ def cmd_preview(args: argparse.Namespace) -> int:
     finally:
         server.server_close()
     return 0
+
+
+def cmd_doctor(args: argparse.Namespace) -> int:
+    oks, errors = doctor(args.path)
+    sys.stdout.write(format_doctor(oks, errors))
+    return 1 if errors else 0
 
 
 def cmd_config(args: argparse.Namespace) -> int:
