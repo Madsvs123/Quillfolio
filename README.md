@@ -105,6 +105,15 @@ py -3 -m quillfolio tailor examples/sample-resume.yaml --role "Python observabil
 py -3 -m quillfolio tailor resume.yaml --role "platform services" --keyword python --max-roles 2 --out tailored.yaml
 ```
 
+### keywords
+
+Read a job description from a text file on this machine and report which of its words already appear in the resume. Matching is whole-word and ignores case. Words shorter than `--min-length` (default 4) and a small set of common filler words are skipped. Nothing is uploaded. `--fail-under` exits `1` when the coverage percent is below the number you pass.
+
+```text
+py -3 -m quillfolio keywords resume.yaml job.txt
+py -3 -m quillfolio keywords resume.yaml job.txt --min-length 3 --fail-under 40
+```
+
 ### cover-letter
 
 Draft a plain-text letter from the same resume file. The command uses your name, contact lines, summary, and up to three experience highlights. It does not look up the company and it does not send the file. The resume itself is left unchanged.

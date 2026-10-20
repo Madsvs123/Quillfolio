@@ -12,6 +12,7 @@ from quillfolio.cover import render_cover_letter
 from quillfolio.diffing import diff_resumes, format_diff
 from quillfolio.errors import Issue, ResumeError
 from quillfolio.html_render import normalize_theme, render_html, theme_names
+from quillfolio.keywords import format_coverage, keyword_coverage, load_job_text
 from quillfolio.markdown_render import render_markdown
 from quillfolio.mutate import add_project, add_role, write_starter
 from quillfolio.plain_render import render_plain
@@ -119,6 +120,17 @@ def build_parser() -> argparse.ArgumentParser:
     tailor.add_argument("--max-roles", type=int)
     tailor.add_argument("--max-projects", type=int)
     tailor.set_defaults(func=cmd_tailor)
+
+    keywords = commands.add_parser("keywords", help="compare the resume with a local job description")
+    _add_resume_arg(keywords)
+    keywords.add_argument("job", type=Path, help="UTF-8 job-description text file on this machine")
+    keywords.add_argument("--min-length", type=int, default=4, help="shortest keyword to count (default: 4)")
+    keywords.add_argument(
+        "--fail-under",
+        type=int,
+        help="exit 1 when the coverage percent is below this value",
+    )
+    keywords.set_defaults(func=cmd_keywords)
 
     cover = commands.add_parser("cover-letter", help="draft a letter from this resume file")
     _add_resume_arg(cover)
@@ -311,6 +323,20 @@ def cmd_tailor(args: argparse.Namespace) -> int:
         print(f"wrote {args.out}")
     else:
         sys.stdout.write(dump_text(result.resume, args.path))
+    return 0
+
+
+def cmd_keywords(args: argparse.Namespace) -> int:
+    if args.fail_under is not None and not 0 <= args.fail_under <= 100:
+        print("error: --fail-under must be from 0 to 100", file=sys.stderr)
+        return 1
+    resume = load_resume(args.path)
+    if _reject_errors(resume, args.path):
+        return 1
+    report = keyword_coverage(resume, load_job_text(args.job), min_length=args.min_length)
+    sys.stdout.write(format_coverage(report))
+    if args.fail_under is not None and report.percent < args.fail_under:
+        return 1
     return 0
 
 
