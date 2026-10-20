@@ -19,7 +19,7 @@ from quillfolio.keywords import format_coverage, keyword_coverage, load_job_text
 from quillfolio.linting import lint_resume
 from quillfolio.merge import merge_resumes
 from quillfolio.markdown_render import render_markdown
-from quillfolio.mutate import add_project, add_role, write_starter
+from quillfolio.mutate import add_highlight, add_project, add_role, write_starter
 from quillfolio.plain_render import render_plain
 from quillfolio.preview import make_preview_server
 from quillfolio.reorder import reorder_entries, reorder_sections
@@ -98,6 +98,12 @@ def build_parser() -> argparse.ArgumentParser:
     project.add_argument("--highlight", action="append", dest="highlights")
     project.add_argument("--skill", action="append", dest="skills")
     project.set_defaults(func=cmd_add_project)
+
+    bullet = commands.add_parser("add-bullet", help="append a highlight to an existing entry")
+    _add_resume_arg(bullet)
+    bullet.add_argument("--id", dest="entry_id", required=True, help="experience or project id")
+    bullet.add_argument("--highlight", required=True, help="bullet text to append")
+    bullet.set_defaults(func=cmd_add_bullet)
 
     reorder = commands.add_parser("reorder", help="reorder sections or entries")
     _add_resume_arg(reorder)
@@ -365,6 +371,14 @@ def cmd_add_skill(args: argparse.Namespace) -> int:
     updated = add_skill(resume, args.group, args.item)
     save_resume(args.path, updated)
     print(f"added {args.item} to {args.group} in {args.path}")
+    return 0
+
+
+def cmd_add_bullet(args: argparse.Namespace) -> int:
+    resume = load_resume(args.path)
+    updated = add_highlight(resume, args.entry_id, args.highlight)
+    save_resume(args.path, updated)
+    print(f"added a highlight to {args.entry_id} in {args.path}")
     return 0
 
 

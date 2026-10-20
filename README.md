@@ -94,6 +94,14 @@ Append one experience entry. Repeat `--highlight` and `--skill` for each bullet 
 py -3 -m quillfolio add-role resume.yaml --company "Example Studio" --title "Engineer" --start 2024-01 --end present --location "City, Region" --highlight "Describe one result from your own work." --skill python
 ```
 
+### add-bullet
+
+Append one highlight to an experience entry or project that already has an id. Experience is searched before projects.
+
+```text
+py -3 -m quillfolio add-bullet resume.yaml --id example-role --highlight "Describe one more result from your own work."
+```
+
 ### add-project
 
 Append one project. `--name` and at least one `--highlight` are required.

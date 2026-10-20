@@ -119,6 +119,28 @@ def add_role(
     return updated
 
 
+def add_highlight(resume: dict, entry_id: str, text: str) -> dict:
+    """Return a copy with one highlight appended to an experience entry or project."""
+    updated = _copy_resume(resume)
+    ident = _required(entry_id, "id")
+    bullet = _required(text, "highlight")
+    for section in ("experience", "projects"):
+        entries = updated.get(section)
+        if not isinstance(entries, list):
+            continue
+        for entry in entries:
+            if isinstance(entry, dict) and as_str(entry.get("id")) == ident:
+                highlights = entry.get("highlights")
+                if highlights is None:
+                    highlights = []
+                    entry["highlights"] = highlights
+                if not isinstance(highlights, list):
+                    raise ResumeError(f"{section} highlights must be a list")
+                highlights.append(bullet)
+                return updated
+    raise ResumeError(f"no experience or project with id {ident!r}")
+
+
 def add_project(
     resume: dict,
     *,
