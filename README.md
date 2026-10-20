@@ -1,6 +1,6 @@
 # Quillfolio
 
-Quillfolio is a local command-line tool that turns a resume file you write into Markdown and HTML. It is for the person maintaining their own CV on their own computer. The resume lives in a YAML or JSON file in a folder you choose. Quillfolio checks that file, can add a role or project, can keep the sections that match a target role, and can show the differences between two versions.
+Quillfolio is a local command-line tool that turns a resume file you write into Markdown, HTML, and plain text. It is for the person maintaining their own CV on their own computer. The resume lives in a YAML or JSON file in a folder you choose. Quillfolio checks that file, can add a role or project, can keep the sections that match a target role, and can show the differences between two versions.
 
 It does not collect other people's resumes, run accounts, or send your file anywhere. The preview command serves the rendered page only on `127.0.0.1`.
 
@@ -86,6 +86,15 @@ Render Markdown to stdout, or to a file with `--out`.
 
 ```text
 py -3 -m quillfolio render-md examples/sample-resume.yaml --out resume.md
+```
+
+### render-txt
+
+Render plain text with no Markdown marks. `--width` sets the line length from 40 to 120. The default is 72. Long words stay on one line.
+
+```text
+py -3 -m quillfolio render-txt examples/sample-resume.yaml --out resume.txt
+py -3 -m quillfolio render-txt resume.yaml --width 60
 ```
 
 ### render-html

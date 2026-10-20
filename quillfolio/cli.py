@@ -13,6 +13,7 @@ from quillfolio.errors import Issue, ResumeError
 from quillfolio.html_render import normalize_theme, render_html, theme_names
 from quillfolio.markdown_render import render_markdown
 from quillfolio.mutate import add_project, add_role, write_starter
+from quillfolio.plain_render import render_plain
 from quillfolio.preview import make_preview_server
 from quillfolio.resume_io import dump_text, load_resume, save_resume
 from quillfolio.tailor import tailor_resume
@@ -90,6 +91,12 @@ def build_parser() -> argparse.ArgumentParser:
     _add_resume_arg(render_md)
     render_md.add_argument("--out", type=Path, help="write Markdown here; default is stdout")
     render_md.set_defaults(func=cmd_render_md)
+
+    render_txt = commands.add_parser("render-txt", help="render plain text")
+    _add_resume_arg(render_txt)
+    render_txt.add_argument("--width", type=int, default=72, help="line width from 40 to 120 (default: 72)")
+    render_txt.add_argument("--out", type=Path, help="write text here; default is stdout")
+    render_txt.set_defaults(func=cmd_render_txt)
 
     render_html_cmd = commands.add_parser("render-html", help="render HTML with a built-in theme")
     _add_resume_arg(render_html_cmd)
@@ -237,6 +244,14 @@ def cmd_render_md(args: argparse.Namespace) -> int:
     if _reject_errors(resume, args.path):
         return 1
     _write_output(render_markdown(resume), args.out)
+    return 0
+
+
+def cmd_render_txt(args: argparse.Namespace) -> int:
+    resume = load_resume(args.path)
+    if _reject_errors(resume, args.path):
+        return 1
+    _write_output(render_plain(resume, args.width), args.out)
     return 0
 
 
