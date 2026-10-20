@@ -102,6 +102,15 @@ Append one project. `--name` and at least one `--highlight` are required.
 py -3 -m quillfolio add-project resume.yaml --name "Example Project" --url https://example.com/project --description "A short description." --highlight "Say what you built." --skill python
 ```
 
+### sort
+
+Order `experience` and `education` by start date. The newest start date comes first unless you pass `--ascending`. Entries with a start date that cannot be read stay at the end. The command rewrites the file.
+
+```text
+py -3 -m quillfolio sort resume.yaml
+py -3 -m quillfolio sort resume.yaml --ascending
+```
+
 ### skills
 
 Print skills grouped by category, in the order they appear in the file.

@@ -8,6 +8,7 @@ from pathlib import Path
 
 from quillfolio import __version__
 from quillfolio.bundle import export_directory, export_zip
+from quillfolio.chronology import sort_by_date
 from quillfolio.config import format_config, load_config
 from quillfolio.cover import render_cover_letter
 from quillfolio.diffing import diff_resumes, format_diff
@@ -117,6 +118,11 @@ def build_parser() -> argparse.ArgumentParser:
         help="entry id to place next; repeat in the order you want",
     )
     reorder.set_defaults(func=cmd_reorder)
+
+    sort_cmd = commands.add_parser("sort", help="order experience and education by start date")
+    _add_resume_arg(sort_cmd)
+    sort_cmd.add_argument("--ascending", action="store_true", help="put the earliest start date first")
+    sort_cmd.set_defaults(func=cmd_sort)
 
     skills_cmd = commands.add_parser("skills", help="list skills grouped by category")
     _add_resume_arg(skills_cmd)
@@ -337,6 +343,14 @@ def cmd_add_project(args: argparse.Namespace) -> int:
     )
     save_resume(args.path, updated)
     print(f"added project {args.name} to {args.path}")
+    return 0
+
+
+def cmd_sort(args: argparse.Namespace) -> int:
+    resume = load_resume(args.path)
+    updated = sort_by_date(resume, descending=not args.ascending)
+    save_resume(args.path, updated)
+    print(f"sorted {args.path}")
     return 0
 
 
