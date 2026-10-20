@@ -12,6 +12,7 @@ build/
 *.egg-info/
 .eggs/
 *.egg
+.quillfolio-snapshots/
 .idea/
 .vscode/
 *.log

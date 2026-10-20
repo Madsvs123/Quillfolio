@@ -157,6 +157,16 @@ Compare two resume files and print added, removed, and changed fields. Exit code
 py -3 -m quillfolio diff resume.yaml tailored.yaml
 ```
 
+### snapshot, snapshots, and restore
+
+`snapshot` copies the resume bytes into `.quillfolio-snapshots/` next to the file. The label uses letters, numbers, hyphens, or underscores. `snapshots` lists what has been saved. `restore` writes a saved copy back over the resume. Pass `--force` to replace a label that already exists. These commands do not upload the file.
+
+```text
+py -3 -m quillfolio snapshot resume.yaml --label before-edit
+py -3 -m quillfolio snapshots resume.yaml
+py -3 -m quillfolio restore resume.yaml --label before-edit
+```
+
 ### export
 
 Write `resume.md`, `resume.json`, `resume.yaml`, and one HTML file for each built-in theme (`resume.atelier.html`, `resume.signal.html`, and `resume.ledger.html`). Use `--out` for a directory, `--zip` for an archive, or both.

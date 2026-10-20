@@ -20,6 +20,7 @@ from quillfolio.preview import make_preview_server
 from quillfolio.reorder import reorder_entries, reorder_sections
 from quillfolio.resume_io import dump_text, load_resume, save_resume
 from quillfolio.skills import add_skill, format_skills
+from quillfolio.snapshots import format_snapshots, list_snapshots, restore_snapshot, take_snapshot
 from quillfolio.tailor import tailor_resume
 from quillfolio.validate import validate_resume
 
@@ -164,6 +165,22 @@ def build_parser() -> argparse.ArgumentParser:
     diff.add_argument("left", type=Path)
     diff.add_argument("right", type=Path)
     diff.set_defaults(func=cmd_diff)
+
+    snapshot = commands.add_parser("snapshot", help="save a copy of the resume beside the file")
+    _add_resume_arg(snapshot)
+    snapshot.add_argument("--label", required=True, help="short name for this version")
+    snapshot.add_argument("--force", action="store_true", help="replace a snapshot with the same label")
+    snapshot.set_defaults(func=cmd_snapshot)
+
+    snapshots_cmd = commands.add_parser("snapshots", help="list saved resume versions")
+    _add_resume_arg(snapshots_cmd)
+    snapshots_cmd.set_defaults(func=cmd_snapshots)
+
+    restore = commands.add_parser("restore", help="replace the resume with a saved version")
+    _add_resume_arg(restore)
+    restore.add_argument("--label", help="snapshot label to restore")
+    restore.add_argument("--id", dest="snapshot_id", help="snapshot id to restore")
+    restore.set_defaults(func=cmd_restore)
 
     export = commands.add_parser("export", help="write Markdown, JSON, YAML, and each HTML theme")
     _add_resume_arg(export)
@@ -371,6 +388,26 @@ def cmd_render_html(args: argparse.Namespace) -> int:
         return 1
     theme = normalize_theme(args.theme)
     _write_output(render_html(resume, theme), args.out)
+    return 0
+
+
+def cmd_snapshot(args: argparse.Namespace) -> int:
+    saved = take_snapshot(args.path, args.label, force=args.force)
+    print(f"saved snapshot {saved.number} ({saved.label}) beside {args.path}")
+    return 0
+
+
+def cmd_snapshots(args: argparse.Namespace) -> int:
+    sys.stdout.write(format_snapshots(list_snapshots(args.path)))
+    return 0
+
+
+def cmd_restore(args: argparse.Namespace) -> int:
+    if bool(args.label) == bool(args.snapshot_id):
+        print("error: pass --label or --id", file=sys.stderr)
+        return 1
+    restored = restore_snapshot(args.path, label=args.label, number=args.snapshot_id)
+    print(f"restored snapshot {restored.number} ({restored.label}) to {args.path}")
     return 0
 
 
